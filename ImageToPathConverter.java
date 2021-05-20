@@ -6,8 +6,12 @@ import java.awt.image.BufferedImage;
 //Facade Class
 public class ImageToPathConverter {
 
-    //TODO Find better data structure to hold image?
+    /**
+     * Basic array to store pixels of the image because it
+     * provides relatively fast access and modification of elements.
+     */
     private Color[][] inputImage;
+    private int imageType;
     private PathifiedImage result;
 
     //Specify image to be converted
@@ -20,7 +24,7 @@ public class ImageToPathConverter {
     public PathifiedImage convert(){
         //Convert only once
         if(result==null){
-            result=new PathifiedImage();
+            result=new PathifiedImage(imageType, inputImage);
         }
 
         return result;
@@ -28,7 +32,8 @@ public class ImageToPathConverter {
 
     //Method for copying an image
     private void copyImage(BufferedImage image){
-        //Get image dimensions and transparency
+        //Get image dimensions, type and transparency
+        imageType=image.getType();
         int h=image.getHeight(), w=image.getWidth();
         boolean alpha = image.getColorModel().hasAlpha();
 
