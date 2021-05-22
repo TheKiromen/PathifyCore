@@ -20,11 +20,22 @@ public class ImageToPathConverter {
         copyImage(image);
     }
 
+    /**
+     * Controls how the image is being converted
+     * Converts image only once.
+     * @return Instance of PathifiedImage which contains all steps of the conversion
+     */
     //Convert the image
     public PathifiedImage convert(){
         //Convert only once
         if(result==null){
             result=new PathifiedImage(imageType, inputImage);
+
+            //Blur the image
+            GaussianBlur gBlur = new GaussianBlur(1.5);
+            result.setBlurredImage(gBlur.blur(inputImage));
+
+            //TODO convert the image to greyscale
         }
 
         return result;
