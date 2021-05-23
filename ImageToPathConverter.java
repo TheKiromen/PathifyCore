@@ -32,8 +32,14 @@ public class ImageToPathConverter {
             result=new PathifiedImage(imageType, inputImage);
 
             //Blur the image
-            GaussianBlur gBlur = new GaussianBlur(1.5);
-            result.setBlurredImage(gBlur.blur(inputImage));
+            //Calculate optimal kernel size based on the longest side of the image
+            //TODO calculate kernel size from linear function
+            FastGaussianBlur fgBlur = new FastGaussianBlur(inputImage);
+            result.setBlurredImage(fgBlur.blur());
+
+            //Blur the image
+//            GaussianBlur gBlur = new GaussianBlur(10);
+//            result.setBlurredImage(gBlur.blur(inputImage));
 
             //TODO convert the image to greyscale
         }
