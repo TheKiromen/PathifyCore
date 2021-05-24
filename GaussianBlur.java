@@ -9,7 +9,7 @@ public class GaussianBlur {
     /**
      * Blurring kernel is square so its width and height are both equal to length variable.
      */
-    private int kernelLength = 21;
+    private int kernelLength = 20;
     /**
      * Weight matrix, is square and normalized.
      */
