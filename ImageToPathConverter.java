@@ -2,6 +2,7 @@ package com.dkrucze.PathifyCore;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 //Facade Class
 public class ImageToPathConverter {
@@ -32,14 +33,8 @@ public class ImageToPathConverter {
             result=new PathifiedImage(imageType, inputImage);
 
             //Blur the image
-            //Calculate optimal kernel size based on the longest side of the image
-            //TODO calculate kernel size from linear function
             FastGaussianBlur fgBlur = new FastGaussianBlur(inputImage);
             result.setBlurredImage(fgBlur.blur());
-
-            //Blur the image
-//            GaussianBlur gBlur = new GaussianBlur(10);
-//            result.setBlurredImage(gBlur.blur(inputImage));
 
             //TODO convert the image to greyscale
         }
@@ -52,13 +47,25 @@ public class ImageToPathConverter {
         //Get image dimensions, type and transparency
         imageType=image.getType();
         int h=image.getHeight(), w=image.getWidth();
-        boolean alpha = image.getColorModel().hasAlpha();
+        //Get image data in byte format
+        byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
         //Copy the image
         inputImage=new Color[h][w];
-        for(int i=0;i<h;i++){
-            for(int j=0;j<w;j++){
-                inputImage[i][j]=new Color(image.getRGB(j,i),alpha);
+        int pxLength = 3,rgb;
+        //Loop through image data
+        for(int pixel=0,y=0,x=0; pixel+2<pixels.length;pixel+=pxLength){
+            rgb=0;
+            rgb += -16777216; //jpg has no alpha thus 255 for alpha channel
+            rgb += ((int) pixels[pixel] & 255); // blue
+            rgb += (((int) pixels[pixel + 1] & 255) << 8); // green
+            rgb += (((int) pixels[pixel + 2] & 255) << 16); // red
+
+            inputImage[y][x]=new Color(rgb);
+            x++;
+            if(x==w){
+                x=0;
+                y++;
             }
         }
     }
