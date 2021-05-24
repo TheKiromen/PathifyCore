@@ -1,21 +1,26 @@
 package com.dkrucze.PathifyCore;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
-//Facade Class
+/**
+ * Facade class to warp up all conversions for easier use
+ */
 public class ImageToPathConverter {
 
     /**
-     * Basic array to store pixels of the image because it
+     * Java array to store pixels of the image because it
      * provides relatively fast access and modification of elements.
+     * Pixels are stored as Integers in RGB format
      */
-    private Color[][] inputImage;
+    private int[][] inputImage;
     private int imageType;
     private PathifiedImage result;
 
-    //Specify image to be converted
+    /**
+     * Constructor
+     * @param image Image to be converted
+     */
     public ImageToPathConverter(BufferedImage image){
         //Copy image into an array for easier processing
         copyImage(image);
@@ -42,7 +47,12 @@ public class ImageToPathConverter {
         return result;
     }
 
-    //Method for copying an image
+
+    /**
+     * Converts image pixels into RGB value using byte operations.
+     * Saves them into a copy of the image.
+     * @param image Image to be converted.
+     */
     private void copyImage(BufferedImage image){
         //Get image dimensions, type and transparency
         imageType=image.getType();
@@ -51,7 +61,7 @@ public class ImageToPathConverter {
         byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
         //Copy the image
-        inputImage=new Color[h][w];
+        inputImage=new int[h][w];
         int pxLength = 3,rgb;
         //Loop through image data
         for(int pixel=0,y=0,x=0; pixel+2<pixels.length;pixel+=pxLength){
@@ -61,7 +71,7 @@ public class ImageToPathConverter {
             rgb += (((int) pixels[pixel + 1] & 255) << 8); // green
             rgb += (((int) pixels[pixel + 2] & 255) << 16); // red
 
-            inputImage[y][x]=new Color(rgb);
+            inputImage[y][x]=rgb;
             x++;
             if(x==w){
                 x=0;

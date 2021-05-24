@@ -1,20 +1,22 @@
 package com.dkrucze.PathifyCore;
 
-
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Holds all the steps of conversion.
+ * Provides final result of the conversion as well as the results of the intermediate steps.
+ */
 public class PathifiedImage {
 
-    private Color[][] initialImage,blurredImage;
+    private int[][] initialImage,blurredImage;
     private int imageType;
 
-    public PathifiedImage(int imageType,Color[][] initialImage){
+    public PathifiedImage(int imageType,int[][] initialImage){
         this.imageType=imageType;
         this.initialImage=initialImage;
     }
 
-    public void setBlurredImage(Color[][] blurredImage) {
+    public void setBlurredImage(int[][] blurredImage) {
         this.blurredImage = blurredImage;
     }
 
@@ -26,11 +28,16 @@ public class PathifiedImage {
         return getBufferedImage(initialImage);
     }
 
-    private BufferedImage getBufferedImage(Color[][] pixels) {
+    /**
+     * Converts array of pixels stored in RGB format into ready to save file.
+     * @param pixels Pixels to be converted back into image
+     * @return Image object
+     */
+    private BufferedImage getBufferedImage(int[][] pixels) {
         BufferedImage tmp = new BufferedImage(pixels[0].length,pixels.length,imageType);
         for(int i=0; i< pixels.length;i++){
             for(int j=0; j<pixels[0].length;j++){
-                tmp.setRGB(j,i,pixels[i][j].getRGB());
+                tmp.setRGB(j,i,pixels[i][j]);
             }
         }
         return tmp;
