@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
  */
 public class PathifiedImage {
 
-    private int[][] initialImage,blurredImage;
+    private int[][] initialImage,blurredImage,grayscaleImage;
     private int imageType;
 
     public PathifiedImage(int imageType,int[][] initialImage){
@@ -19,13 +19,18 @@ public class PathifiedImage {
     public void setBlurredImage(int[][] blurredImage) {
         this.blurredImage = blurredImage;
     }
-
-    public BufferedImage getBlurredImage(){
-        return getBufferedImage(blurredImage);
+    public void setGreyscaleImage(int[][] grayscaleImage){
+        this.grayscaleImage=grayscaleImage;
     }
 
     public BufferedImage getInitialImage(){
         return getBufferedImage(initialImage);
+    }
+    public BufferedImage getBlurredImage(){
+        return getBufferedImage(blurredImage);
+    }
+    public BufferedImage getGreyscaleImage(){
+        return getBufferedImage(grayscaleImage);
     }
 
     /**

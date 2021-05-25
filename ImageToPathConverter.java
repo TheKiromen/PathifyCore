@@ -13,7 +13,7 @@ public class ImageToPathConverter {
      * provides relatively fast access and modification of elements.
      * Pixels are stored as Integers in RGB format
      */
-    private int[][] inputImage;
+    private int[][] tmp;
     private int imageType;
     private PathifiedImage result;
 
@@ -35,13 +35,15 @@ public class ImageToPathConverter {
     public PathifiedImage convert(){
         //Convert only once
         if(result==null){
-            result=new PathifiedImage(imageType, inputImage);
+            result=new PathifiedImage(imageType, tmp);
 
-            //Blur the image
-            FastGaussianBlur fgBlur = new FastGaussianBlur(inputImage);
-            result.setBlurredImage(fgBlur.blur());
+            //Blur the initial image
+            FastGaussianBlur fgBlur = new FastGaussianBlur(tmp);
+            tmp = fgBlur.blur();
+            result.setBlurredImage(tmp);
 
-            //TODO convert the image to greyscale
+            //Convert the blurred image to grayscale
+            result.setGreyscaleImage(GrayscaleConversion.convert(tmp));
         }
 
         return result;
@@ -61,7 +63,7 @@ public class ImageToPathConverter {
         byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
         //Copy the image
-        inputImage=new int[h][w];
+        tmp=new int[h][w];
         int pxLength = 3,rgb;
         //Loop through image data
         for(int pixel=0,y=0,x=0; pixel+2<pixels.length;pixel+=pxLength){
@@ -71,7 +73,7 @@ public class ImageToPathConverter {
             rgb += (((int) pixels[pixel + 1] & 255) << 8); // green
             rgb += (((int) pixels[pixel + 2] & 255) << 16); // red
 
-            inputImage[y][x]=rgb;
+            tmp[y][x]=rgb;
             x++;
             if(x==w){
                 x=0;
