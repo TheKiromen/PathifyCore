@@ -10,6 +10,7 @@ public class PathifiedImage {
 
     private int[][] initialImage,blurredImage,grayscaleImage;
     private int imageType;
+    private SobelResult edges;
 
     public PathifiedImage(int imageType,int[][] initialImage){
         this.imageType=imageType;
@@ -22,6 +23,9 @@ public class PathifiedImage {
     public void setGreyscaleImage(int[][] grayscaleImage){
         this.grayscaleImage=grayscaleImage;
     }
+    public void setSobelEdges(SobelResult edges){
+        this.edges=edges;
+    }
 
     public BufferedImage getInitialImage(){
         return getBufferedImage(initialImage);
@@ -31,6 +35,15 @@ public class PathifiedImage {
     }
     public BufferedImage getGreyscaleImage(){
         return getBufferedImage(grayscaleImage);
+    }
+    public BufferedImage getSobelXGradient(){
+        return getBufferedImage(edges.getxGradient());
+    }
+    public BufferedImage getSobelYGradient(){
+        return getBufferedImage(edges.getyGradient());
+    }
+    public BufferedImage getSobelMagnitude(){
+        return getBufferedImage(edges.getMagnitude());
     }
 
     /**

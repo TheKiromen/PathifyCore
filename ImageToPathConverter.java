@@ -43,7 +43,12 @@ public class ImageToPathConverter {
             result.setBlurredImage(tmp);
 
             //Convert the blurred image to grayscale
-            result.setGreyscaleImage(GrayscaleConversion.convert(tmp));
+            tmp = GrayscaleConversion.convert(tmp);
+            result.setGreyscaleImage(tmp);
+
+            //Find edges using Sobel edge detection
+            SobelEdgeDetection sobel = new SobelEdgeDetection(100);
+            result.setSobelEdges(sobel.findEdges(tmp));
         }
 
         return result;

@@ -5,7 +5,7 @@ public class SobelResult {
     private int[][] magnitude,xGradient,yGradient;
 
     public SobelResult(){}
-    public SobelResult(int[][] magnitude,int[][] xGradient,int[][] yGradient){
+    public SobelResult(int[][] xGradient,int[][] yGradient,int[][] magnitude){
         this.magnitude=magnitude;
         this.xGradient=xGradient;
         this.yGradient=yGradient;
