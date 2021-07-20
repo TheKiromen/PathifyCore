@@ -22,6 +22,7 @@ public class FastGaussianBlur {
         h=input.length; w=input[0].length;
         int longerSide = (h>w)? h : w;
 
+        //FIXME Change to smaller kernels for bigger images
         //Calculate Kernel size and sigma
         kernelSize=((18*longerSide/3797)+(11337/3797));
         kernel=new double[kernelSize];
