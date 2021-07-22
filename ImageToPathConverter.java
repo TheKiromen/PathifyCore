@@ -47,7 +47,7 @@ public class ImageToPathConverter {
             result.setGreyscaleImage(tmp);
 
             //Find edges using Sobel edge detection
-            SobelEdgeDetection sobel = new SobelEdgeDetection(100);
+            SobelEdgeDetection sobel = new SobelEdgeDetection(20);
             result.setSobelEdges(sobel.findEdges(tmp));
         }
 

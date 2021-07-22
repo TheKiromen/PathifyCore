@@ -7,7 +7,11 @@ public class SobelEdgeDetection {
     private int[][] xGradient,yGradient,magnitude;
 
     public SobelEdgeDetection(int threshold){
-        this.threshold=threshold;
+        if(threshold>=0&&threshold<=255){
+            this.threshold=threshold;
+        }else{
+            throw new IllegalArgumentException("Threshold must be between 0 and 255.");
+        }
     }
 
 
@@ -26,6 +30,8 @@ public class SobelEdgeDetection {
                        -(input[y+1][x-1]&255)*0.25-(input[y][x-1]&255)*0.5-(input[y-1][x-1]&255)*0.25
                 );
                 sumx=Math.abs(sumx);
+                if(sumx<threshold)
+                    sumx=0;
                 xGradient[y][x]=(sumx << 16 | sumx << 8 | sumx)-16777216;
 
                 //Calculate yGradient
@@ -34,6 +40,8 @@ public class SobelEdgeDetection {
                        -(input[y-1][x-1]&255)*0.25-(input[y-1][x]&255)*0.5-(input[y-1][x+1]&255)*0.25
                 );
                 sumy=Math.abs(sumy);
+                if(sumy<threshold)
+                    sumy=0;
                 yGradient[y][x]=(sumy << 16 | sumy << 8 | sumy)-16777216;
 
                 //Calculate magnitude

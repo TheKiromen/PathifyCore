@@ -35,7 +35,7 @@ public class FastGaussianBlur {
         kernelSize=(kernelSize>shorterSide)? shorterSide : kernelSize;
         kernel=new double[kernelSize];
         offset=kernelSize/2;
-        sigma=0.7;
+        sigma=0.5;
 
         double summation=0;
         //Compute kernel values
