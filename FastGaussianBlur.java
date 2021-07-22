@@ -20,14 +20,22 @@ public class FastGaussianBlur {
     public FastGaussianBlur(int[][] input){
         this.input=input;
         h=input.length; w=input[0].length;
-        int longerSide = (h>w)? h : w;
+        int longerSide,shorterSide;
+        if(h>w){
+            longerSide=h;
+            shorterSide=w;
+        }else{
+            longerSide=w;
+            shorterSide=h;
+        }
 
-        //FIXME Change to smaller kernels for bigger images
-        //Calculate Kernel size and sigma
-        kernelSize=((18*longerSide/3797)+(11337/3797));
+
+        //Create blur kernel
+        kernelSize=3;
+        kernelSize=(kernelSize>shorterSide)? shorterSide : kernelSize;
         kernel=new double[kernelSize];
         offset=kernelSize/2;
-        sigma=(0.0025*longerSide+0.5);
+        sigma=0.7;
 
         double summation=0;
         //Compute kernel values
