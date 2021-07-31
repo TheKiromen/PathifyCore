@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
  */
 public class PathifiedImage {
 
-    private int[][] initialImage,blurredImage,grayscaleImage;
+    private int[][] initialImage,blurredImage,grayscaleImage,canny;
     private int imageType;
     private SobelResult edges;
 
@@ -25,6 +25,9 @@ public class PathifiedImage {
     }
     public void setSobelEdges(SobelResult edges){
         this.edges=edges;
+    }
+    public void setCannyEdges(int[][] canny){
+        this.canny=canny;
     }
 
     public BufferedImage getInitialImage(){
@@ -44,6 +47,9 @@ public class PathifiedImage {
     }
     public BufferedImage getSobelMagnitude(){
         return getBufferedImage(edges.getMagnitude());
+    }
+    public BufferedImage getCannyEdges(){
+        return getBufferedImage(canny);
     }
 
     /**
