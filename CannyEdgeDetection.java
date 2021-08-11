@@ -71,27 +71,112 @@ public class CannyEdgeDetection {
                     if(maxVal>highThreshold){
                         result[maxY][maxX]=white;
                     }else if(maxVal>lowThreshold){
-                        candidates[y][x]=true;
+                        candidates[maxY][maxX]=true;
                     }
 
                 }else if(angle >= 22.5 && angle <= 67.5){
                     //Right diagonal /
 
+                    //Check right side
+                    while(sobelMag[y-yOffset][x+xOffset]!=black){
+                        if((sobelMag[y-yOffset][x+xOffset]&255)>maxVal){
+                            maxX=x+xOffset;
+                            maxY=y-yOffset;
+                            maxVal=sobelMag[y-yOffset][x+xOffset]&255;
+                        }
+                        xOffset++;
+                        yOffset++;
+                    }
+                    xOffset=1;
+                    yOffset=1;
+
+                    //Check left side
+                    while(sobelMag[y+yOffset][x-xOffset]!=black){
+                        if((sobelMag[y+yOffset][x-xOffset]&255)>maxVal){
+                            maxX=x-xOffset;
+                            maxY=y+yOffset;
+                            maxVal=sobelMag[y+yOffset][x-xOffset]&255;
+                        }
+                        xOffset++;
+                        yOffset++;
+                    }
+
+                    //Mark a local maximum as a edge or edge candidate based on its value
+                    if(maxVal>highThreshold){
+                        result[maxY][maxX]=white;
+                    }else if(maxVal>lowThreshold){
+                        candidates[maxY][maxX]=true;
+                    }
+
                 }else if(angle > 67.5 && angle < 112.5){
                     //Vertical |
+
+                    //Check above
+                    while(sobelMag[y-yOffset][x]!=black){
+                        if((sobelMag[y-yOffset][x]&255)>maxVal){
+                            maxY=y-yOffset;
+                            maxVal=sobelMag[y-yOffset][x]&255;
+                        }
+                        yOffset++;
+                    }
+                    yOffset=1;
+
+                    //Check below
+                    while(sobelMag[y+yOffset][x]!=black){
+                        if((sobelMag[y+yOffset][x]&255)>maxVal){
+                            maxY=y+yOffset;
+                            maxVal=sobelMag[y+yOffset][x]&255;
+                        }
+                        yOffset++;
+                    }
+
+                    //Mark a local maximum as a edge or edge candidate based on its value
+                    if(maxVal>highThreshold){
+                        result[maxY][maxX]=white;
+                    }else if(maxVal>lowThreshold){
+                        candidates[maxY][maxX]=true;
+                    }
 
                 }else{//Angle between 112.5 and 157.5
                     //Left diagonal \
 
-                }
+                    //Check right side
+                    while(sobelMag[y+yOffset][x+xOffset]!=black){
+                        if((sobelMag[y+yOffset][x+xOffset]&255)>maxVal){
+                            maxX=x+xOffset;
+                            maxY=y+yOffset;
+                            maxVal=sobelMag[y+yOffset][x+xOffset]&255;
+                        }
+                        xOffset++;
+                        yOffset++;
+                    }
+                    xOffset=1;
+                    yOffset=1;
 
-                //TODO
-                //-Check for local maximum
-                //-If above highThreshold set pixel in result to white.
-                //-If between two thresholds, mark it as a candidate
-                //-If below the lowThreshold set it to black in result
+                    //Check left side
+                    while(sobelMag[y-yOffset][x-xOffset]!=black){
+                        if((sobelMag[y-yOffset][x-xOffset]&255)>maxVal){
+                            maxX=x-xOffset;
+                            maxY=y-yOffset;
+                            maxVal=sobelMag[y-yOffset][x-xOffset]&255;
+                        }
+                        xOffset++;
+                        yOffset++;
+                    }
+
+                    //Mark a local maximum as a edge or edge candidate based on its value
+                    if(maxVal>highThreshold){
+                        result[maxY][maxX]=white;
+                    }else if(maxVal>lowThreshold){
+                        candidates[maxY][maxX]=true;
+                    }
+                }
             }
         }
+
+        //TODO
+        //Check until below low threshold instead of black color?
+        //Could be good for low-res images with little space between edges
 
         //Check all edge candidates
         for(int y=1;y<h-1;y++){

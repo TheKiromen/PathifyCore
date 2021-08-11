@@ -1,5 +1,7 @@
 package com.dkrucze.PathifyCore;
 
+import java.awt.*;
+
 public class SobelEdgeDetection {
 
     private int threshold;
@@ -44,6 +46,25 @@ public class SobelEdgeDetection {
                     mag=255;
                 magnitude[y][x]=(mag << 16 | mag << 8 | mag)-16777216;
             }
+        }
+
+        //Fill the edges
+        int black = Color.BLACK.getRGB();
+        for(int x=0;x<w;x++){
+            magnitude[0][x]=black;
+            xGradient[0][x]=black;
+            yGradient[0][x]=black;
+            magnitude[h-1][x]=black;
+            xGradient[h-1][x]=black;
+            yGradient[h-1][x]=black;
+        }
+        for(int y=0;y<h;y++){
+            magnitude[y][0]=black;
+            xGradient[y][0]=black;
+            yGradient[y][0]=black;
+            magnitude[y][w-1]=black;
+            xGradient[y][w-1]=black;
+            yGradient[y][w-1]=black;
         }
 
         result=new SobelResult(xGradient,yGradient,magnitude);
