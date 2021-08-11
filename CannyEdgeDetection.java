@@ -42,34 +42,36 @@ public class CannyEdgeDetection {
                 //Variables for finding local maximum
                 int xOffset=1,yOffset=1;
                 //Coordinates and value of the local maximum
-                int maxX, maxY, maxVal;
+                int maxX=x, maxY=y, maxVal=sobelMag[y][x]&255;
 
                 //Possible edge directions:
                 if(angle < 22.5 || angle > 157.5){
                     //Horizontal ---
-                    maxX=x;
-                    maxY=y;
-                    maxVal=sobelMag[y][x]&255;
 
                     //Check right side
-                    while(sobelMag[y+yOffset][x]!=black){
-                        if((sobelMag[y+yOffset][x]&255)>maxVal){
-                            maxY=y+yOffset;
-                            maxVal=sobelMag[y+yOffset][x]&255;
+                    while(sobelMag[y][x+xOffset]!=black){
+                        if((sobelMag[y][x+xOffset]&255)>maxVal){
+                            maxX=x+xOffset;
+                            maxVal=sobelMag[y][x+xOffset]&255;
                         }
+                        xOffset++;
                     }
-                    yOffset=1;
+                    xOffset=1;
+
                     //Check left side
-                    while(sobelMag[y-yOffset][x]!=black){
-                        if((sobelMag[y-yOffset][x]&255)>maxVal){
-                            maxY=y-yOffset;
-                            maxVal=sobelMag[y+yOffset][x]&255;
+                    while(sobelMag[y][x-xOffset]!=black){
+                        if((sobelMag[y][x-xOffset]&255)>maxVal){
+                            maxX=x-xOffset;
+                            maxVal=sobelMag[y][x-xOffset]&255;
                         }
+                        xOffset++;
                     }
 
-                    //Set pixel to white at local maximum coordinates if it is above highThreshold
+                    //Mark a local maximum as a edge or edge candidate based on its value
                     if(maxVal>highThreshold){
                         result[maxY][maxX]=white;
+                    }else if(maxVal>lowThreshold){
+                        candidates[y][x]=true;
                     }
 
                 }else if(angle >= 22.5 && angle <= 67.5){
