@@ -29,13 +29,13 @@ public class FastGaussianBlur {
             shorterSide=h;
         }
 
-
+        //FIXME Change kernel size and values
         //Create blur kernel
         kernelSize=3;
         kernelSize=(kernelSize>shorterSide)? shorterSide : kernelSize;
         kernel=new double[kernelSize];
         offset=kernelSize/2;
-        sigma=0.5;
+        sigma=3;
 
         double summation=0;
         //Compute kernel values

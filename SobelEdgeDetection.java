@@ -16,7 +16,7 @@ public class SobelEdgeDetection {
         }
     }
 
-
+    //FIXME Correct the implementation
     public SobelResult findEdges(int[][] input){
         int h=input.length, w=input[0].length;
         int sumx,sumy,mag;

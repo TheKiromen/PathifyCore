@@ -1,12 +1,13 @@
 package com.dkrucze.PathifyCore;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class CannyEdgeDetection {
 
     private int[][] sobelX,sobelY,sobelMag,result;
     private boolean[][] candidates;
-    private int highThreshold=200, lowThreshold=50;
+    private int highThreshold=100, lowThreshold=20;
     private int w,h;
 
     CannyEdgeDetection(SobelResult sobel){
@@ -28,7 +29,6 @@ public class CannyEdgeDetection {
 
     public int[][] detect(){
         double angle;
-        int black = Color.BLACK.getRGB();
         int white = Color.WHITE.getRGB();
 
         //Find all pixels above highThreshold
@@ -49,7 +49,7 @@ public class CannyEdgeDetection {
                     //Horizontal ---
 
                     //Check right side
-                    while(sobelMag[y][x+xOffset]!=black){
+                    while((sobelMag[y][x+xOffset]&255)>lowThreshold){
                         if((sobelMag[y][x+xOffset]&255)>maxVal){
                             maxX=x+xOffset;
                             maxVal=sobelMag[y][x+xOffset]&255;
@@ -59,7 +59,7 @@ public class CannyEdgeDetection {
                     xOffset=1;
 
                     //Check left side
-                    while(sobelMag[y][x-xOffset]!=black){
+                    while((sobelMag[y][x-xOffset]&255)>lowThreshold){
                         if((sobelMag[y][x-xOffset]&255)>maxVal){
                             maxX=x-xOffset;
                             maxVal=sobelMag[y][x-xOffset]&255;
@@ -78,7 +78,7 @@ public class CannyEdgeDetection {
                     //Right diagonal /
 
                     //Check right side
-                    while(sobelMag[y-yOffset][x+xOffset]!=black){
+                    while((sobelMag[y-yOffset][x+xOffset]&255)>lowThreshold){
                         if((sobelMag[y-yOffset][x+xOffset]&255)>maxVal){
                             maxX=x+xOffset;
                             maxY=y-yOffset;
@@ -91,7 +91,7 @@ public class CannyEdgeDetection {
                     yOffset=1;
 
                     //Check left side
-                    while(sobelMag[y+yOffset][x-xOffset]!=black){
+                    while((sobelMag[y+yOffset][x-xOffset]&255)>lowThreshold){
                         if((sobelMag[y+yOffset][x-xOffset]&255)>maxVal){
                             maxX=x-xOffset;
                             maxY=y+yOffset;
@@ -112,7 +112,7 @@ public class CannyEdgeDetection {
                     //Vertical |
 
                     //Check above
-                    while(sobelMag[y-yOffset][x]!=black){
+                    while((sobelMag[y-yOffset][x]&255)>lowThreshold){
                         if((sobelMag[y-yOffset][x]&255)>maxVal){
                             maxY=y-yOffset;
                             maxVal=sobelMag[y-yOffset][x]&255;
@@ -122,7 +122,7 @@ public class CannyEdgeDetection {
                     yOffset=1;
 
                     //Check below
-                    while(sobelMag[y+yOffset][x]!=black){
+                    while((sobelMag[y+yOffset][x]&255)>lowThreshold){
                         if((sobelMag[y+yOffset][x]&255)>maxVal){
                             maxY=y+yOffset;
                             maxVal=sobelMag[y+yOffset][x]&255;
@@ -141,7 +141,7 @@ public class CannyEdgeDetection {
                     //Left diagonal \
 
                     //Check right side
-                    while(sobelMag[y+yOffset][x+xOffset]!=black){
+                    while((sobelMag[y+yOffset][x+xOffset]&255)>lowThreshold){
                         if((sobelMag[y+yOffset][x+xOffset]&255)>maxVal){
                             maxX=x+xOffset;
                             maxY=y+yOffset;
@@ -154,7 +154,7 @@ public class CannyEdgeDetection {
                     yOffset=1;
 
                     //Check left side
-                    while(sobelMag[y-yOffset][x-xOffset]!=black){
+                    while((sobelMag[y-yOffset][x-xOffset]&255)>lowThreshold){
                         if((sobelMag[y-yOffset][x-xOffset]&255)>maxVal){
                             maxX=x-xOffset;
                             maxY=y-yOffset;
@@ -171,12 +171,14 @@ public class CannyEdgeDetection {
                         candidates[maxY][maxX]=true;
                     }
                 }
+                if(result[y][x]==white)
+                    counter++;
             }
         }
 
-        //TODO
-        //Check until below low threshold instead of black color?
-        //Could be good for low-res images with little space between edges
+        //FIXME
+        //Two pixel wide edges because of same value local max's next to each other.
+        //Figure out good threshold values.
 
         //Check all edge candidates
         for(int y=1;y<h-1;y++){
