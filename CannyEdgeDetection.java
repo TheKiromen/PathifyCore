@@ -1,7 +1,6 @@
 package com.dkrucze.PathifyCore;
 
 import java.awt.*;
-import java.util.Arrays;
 
 public class CannyEdgeDetection {
 
@@ -171,8 +170,6 @@ public class CannyEdgeDetection {
                         candidates[maxY][maxX]=true;
                     }
                 }
-                if(result[y][x]==white)
-                    counter++;
             }
         }
 

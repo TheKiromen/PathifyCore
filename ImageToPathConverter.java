@@ -37,18 +37,18 @@ public class ImageToPathConverter {
         if(result==null){
             result=new PathifiedImage(imageType, tmp);
 
-            //Blur the initial image
-            FastGaussianBlur fgBlur = new FastGaussianBlur(tmp);
-            tmp = fgBlur.blur();
-            result.setBlurredImage(tmp);
-
             //Convert the blurred image to grayscale
             tmp = GrayscaleConversion.convert(tmp);
             result.setGreyscaleImage(tmp);
 
+            //Blur the initial image
+            GaussianBlur fgBlur = new GaussianBlur(tmp);
+            tmp = fgBlur.blur();
+            result.setBlurredImage(tmp);
+
             //Find edges using Sobel edge detection
-            //Small threshold to remove any residual noise
-            SobelEdgeDetection sobel = new SobelEdgeDetection(10);
+            //Small threshold to remove any residual noise?
+            SobelEdgeDetection sobel = new SobelEdgeDetection(0);
             SobelResult sobelRes = sobel.findEdges(tmp);
             result.setSobelEdges(sobelRes);
 
