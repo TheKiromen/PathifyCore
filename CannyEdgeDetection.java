@@ -33,148 +33,149 @@ public class CannyEdgeDetection {
         //Find all pixels above highThreshold
         for(int y=1;y<h-1;y++){
             for(int x=1;x<w-1;x++){
-                //atan() returns value from -PI/2 to PI/2, so I am adding PI/2,
-                //and converting to degrees for simplicity.
-                angle=Math.atan(sobelY[y][x]/sobelX[y][x])+Math.PI/2;
-                //New angle range is from 0 to 180 degrees (semicircle)
-                angle=Math.toDegrees(angle);
-                //Variables for finding local maximum
-                int xOffset=1,yOffset=1;
-                //Coordinates and value of the local maximum
-                int maxX=x, maxY=y, maxVal=sobelMag[y][x]&255;
-
-                //Possible edge directions:
-                if(angle < 22.5 || angle > 157.5){
-                    //Horizontal ---
-
-                    //Check right side
-                    while((sobelMag[y][x+xOffset]&255)>lowThreshold){
-                        if((sobelMag[y][x+xOffset]&255)>maxVal){
-                            maxX=x+xOffset;
-                            maxVal=sobelMag[y][x+xOffset]&255;
-                        }
-                        xOffset++;
-                    }
-                    xOffset=1;
-
-                    //Check left side
-                    while((sobelMag[y][x-xOffset]&255)>lowThreshold){
-                        if((sobelMag[y][x-xOffset]&255)>maxVal){
-                            maxX=x-xOffset;
-                            maxVal=sobelMag[y][x-xOffset]&255;
-                        }
-                        xOffset++;
-                    }
-
-                    //Mark a local maximum as a edge or edge candidate based on its value
-                    if(maxVal>highThreshold){
-                        result[maxY][maxX]=white;
-                    }else if(maxVal>lowThreshold){
-                        candidates[maxY][maxX]=true;
-                    }
-
-                }else if(angle >= 22.5 && angle <= 67.5){
-                    //Right diagonal /
-
-                    //Check right side
-                    while((sobelMag[y-yOffset][x+xOffset]&255)>lowThreshold){
-                        if((sobelMag[y-yOffset][x+xOffset]&255)>maxVal){
-                            maxX=x+xOffset;
-                            maxY=y-yOffset;
-                            maxVal=sobelMag[y-yOffset][x+xOffset]&255;
-                        }
-                        xOffset++;
-                        yOffset++;
-                    }
-                    xOffset=1;
-                    yOffset=1;
-
-                    //Check left side
-                    while((sobelMag[y+yOffset][x-xOffset]&255)>lowThreshold){
-                        if((sobelMag[y+yOffset][x-xOffset]&255)>maxVal){
-                            maxX=x-xOffset;
-                            maxY=y+yOffset;
-                            maxVal=sobelMag[y+yOffset][x-xOffset]&255;
-                        }
-                        xOffset++;
-                        yOffset++;
-                    }
-
-                    //Mark a local maximum as a edge or edge candidate based on its value
-                    if(maxVal>highThreshold){
-                        result[maxY][maxX]=white;
-                    }else if(maxVal>lowThreshold){
-                        candidates[maxY][maxX]=true;
-                    }
-
-                }else if(angle > 67.5 && angle < 112.5){
-                    //Vertical |
-
-                    //Check above
-                    while((sobelMag[y-yOffset][x]&255)>lowThreshold){
-                        if((sobelMag[y-yOffset][x]&255)>maxVal){
-                            maxY=y-yOffset;
-                            maxVal=sobelMag[y-yOffset][x]&255;
-                        }
-                        yOffset++;
-                    }
-                    yOffset=1;
-
-                    //Check below
-                    while((sobelMag[y+yOffset][x]&255)>lowThreshold){
-                        if((sobelMag[y+yOffset][x]&255)>maxVal){
-                            maxY=y+yOffset;
-                            maxVal=sobelMag[y+yOffset][x]&255;
-                        }
-                        yOffset++;
-                    }
-
-                    //Mark a local maximum as a edge or edge candidate based on its value
-                    if(maxVal>highThreshold){
-                        result[maxY][maxX]=white;
-                    }else if(maxVal>lowThreshold){
-                        candidates[maxY][maxX]=true;
-                    }
-
-                }else{//Angle between 112.5 and 157.5
-                    //Left diagonal \
-
-                    //Check right side
-                    while((sobelMag[y+yOffset][x+xOffset]&255)>lowThreshold){
-                        if((sobelMag[y+yOffset][x+xOffset]&255)>maxVal){
-                            maxX=x+xOffset;
-                            maxY=y+yOffset;
-                            maxVal=sobelMag[y+yOffset][x+xOffset]&255;
-                        }
-                        xOffset++;
-                        yOffset++;
-                    }
-                    xOffset=1;
-                    yOffset=1;
-
-                    //Check left side
-                    while((sobelMag[y-yOffset][x-xOffset]&255)>lowThreshold){
-                        if((sobelMag[y-yOffset][x-xOffset]&255)>maxVal){
-                            maxX=x-xOffset;
-                            maxY=y-yOffset;
-                            maxVal=sobelMag[y-yOffset][x-xOffset]&255;
-                        }
-                        xOffset++;
-                        yOffset++;
-                    }
-
-                    //Mark a local maximum as a edge or edge candidate based on its value
-                    if(maxVal>highThreshold){
-                        result[maxY][maxX]=white;
-                    }else if(maxVal>lowThreshold){
-                        candidates[maxY][maxX]=true;
-                    }
-                }
+                //FIXME: Correct angle directions
+//                //atan() returns value from -PI/2 to PI/2, so I am adding PI/2,
+//                //and converting to degrees for simplicity.
+//                angle=Math.atan(sobelY[y][x]/sobelX[y][x])+Math.PI/2;
+//                //New angle range is from 0 to 180 degrees (semicircle)
+//                angle=Math.toDegrees(angle);
+//                //Variables for finding local maximum
+//                int xOffset=1,yOffset=1;
+//                //Coordinates and value of the local maximum
+//                int maxX=x, maxY=y, maxVal=sobelMag[y][x]&255;
+//
+//                //Possible edge directions:
+//                if(angle < 22.5 || angle > 157.5){
+//                    //Horizontal ---
+//
+//                    //Check right side
+//                    while((sobelMag[y][x+xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y][x+xOffset]&255)>maxVal){
+//                            maxX=x+xOffset;
+//                            maxVal=sobelMag[y][x+xOffset]&255;
+//                        }
+//                        xOffset++;
+//                    }
+//                    xOffset=1;
+//
+//                    //Check left side
+//                    while((sobelMag[y][x-xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y][x-xOffset]&255)>maxVal){
+//                            maxX=x-xOffset;
+//                            maxVal=sobelMag[y][x-xOffset]&255;
+//                        }
+//                        xOffset++;
+//                    }
+//
+//                    //Mark a local maximum as a edge or edge candidate based on its value
+//                    if(maxVal>highThreshold){
+//                        result[maxY][maxX]=white;
+//                    }else if(maxVal>lowThreshold){
+//                        candidates[maxY][maxX]=true;
+//                    }
+//
+//                }else if(angle >= 22.5 && angle <= 67.5){
+//                    //Right diagonal /
+//
+//                    //Check right side
+//                    while((sobelMag[y-yOffset][x+xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y-yOffset][x+xOffset]&255)>maxVal){
+//                            maxX=x+xOffset;
+//                            maxY=y-yOffset;
+//                            maxVal=sobelMag[y-yOffset][x+xOffset]&255;
+//                        }
+//                        xOffset++;
+//                        yOffset++;
+//                    }
+//                    xOffset=1;
+//                    yOffset=1;
+//
+//                    //Check left side
+//                    while((sobelMag[y+yOffset][x-xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y+yOffset][x-xOffset]&255)>maxVal){
+//                            maxX=x-xOffset;
+//                            maxY=y+yOffset;
+//                            maxVal=sobelMag[y+yOffset][x-xOffset]&255;
+//                        }
+//                        xOffset++;
+//                        yOffset++;
+//                    }
+//
+//                    //Mark a local maximum as a edge or edge candidate based on its value
+//                    if(maxVal>highThreshold){
+//                        result[maxY][maxX]=white;
+//                    }else if(maxVal>lowThreshold){
+//                        candidates[maxY][maxX]=true;
+//                    }
+//
+//                }else if(angle > 67.5 && angle < 112.5){
+//                    //Vertical |
+//
+//                    //Check above
+//                    while((sobelMag[y-yOffset][x]&255)>lowThreshold){
+//                        if((sobelMag[y-yOffset][x]&255)>maxVal){
+//                            maxY=y-yOffset;
+//                            maxVal=sobelMag[y-yOffset][x]&255;
+//                        }
+//                        yOffset++;
+//                    }
+//                    yOffset=1;
+//
+//                    //Check below
+//                    while((sobelMag[y+yOffset][x]&255)>lowThreshold){
+//                        if((sobelMag[y+yOffset][x]&255)>maxVal){
+//                            maxY=y+yOffset;
+//                            maxVal=sobelMag[y+yOffset][x]&255;
+//                        }
+//                        yOffset++;
+//                    }
+//
+//                    //Mark a local maximum as a edge or edge candidate based on its value
+//                    if(maxVal>highThreshold){
+//                        result[maxY][maxX]=white;
+//                    }else if(maxVal>lowThreshold){
+//                        candidates[maxY][maxX]=true;
+//                    }
+//
+//                }else{//Angle between 112.5 and 157.5
+//                    //Left diagonal \
+//
+//                    //Check right side
+//                    while((sobelMag[y+yOffset][x+xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y+yOffset][x+xOffset]&255)>maxVal){
+//                            maxX=x+xOffset;
+//                            maxY=y+yOffset;
+//                            maxVal=sobelMag[y+yOffset][x+xOffset]&255;
+//                        }
+//                        xOffset++;
+//                        yOffset++;
+//                    }
+//                    xOffset=1;
+//                    yOffset=1;
+//
+//                    //Check left side
+//                    while((sobelMag[y-yOffset][x-xOffset]&255)>lowThreshold){
+//                        if((sobelMag[y-yOffset][x-xOffset]&255)>maxVal){
+//                            maxX=x-xOffset;
+//                            maxY=y-yOffset;
+//                            maxVal=sobelMag[y-yOffset][x-xOffset]&255;
+//                        }
+//                        xOffset++;
+//                        yOffset++;
+//                    }
+//
+//                    //Mark a local maximum as a edge or edge candidate based on its value
+//                    if(maxVal>highThreshold){
+//                        result[maxY][maxX]=white;
+//                    }else if(maxVal>lowThreshold){
+//                        candidates[maxY][maxX]=true;
+//                    }
+//                }
             }
         }
 
-        //FIXME
-        //Two pixel wide edges because of same value local max's next to each other.
+        //TODO
+        //Deal with two pixel wide edges (caused by two local max's with same values?)
         //Figure out good threshold values.
 
         //Check all edge candidates

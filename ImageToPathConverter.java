@@ -49,16 +49,15 @@ public class ImageToPathConverter {
             tmp = fgBlur.blur();
             result.setBlurredImage(tmp);
 
-//            //Find edges using Sobel edge detection
-//            //Small threshold to remove any residual noise?
-//            SobelEdgeDetection sobel = new SobelEdgeDetection(0);
-//            SobelResult sobelRes = sobel.findEdges(tmp);
-//            result.setSobelEdges(sobelRes);
-//
-//            //Enhance the edges using Canny edge detection
-//            CannyEdgeDetection canny = new CannyEdgeDetection(sobelRes);
-//            tmp = canny.detect();
-//            result.setCannyEdges(tmp);
+            //Find edges using sobel edge detection
+            SobelEdgeDetection sobel = new SobelEdgeDetection(tmp);
+            SobelResult sobelRes = sobel.findEdges();
+            result.setSobelEdges(sobelRes);
+
+            //Enhance the edges using Canny edge detection
+            CannyEdgeDetection canny = new CannyEdgeDetection(sobelRes);
+            tmp = canny.detect();
+            result.setCannyEdges(tmp);
         }
 
         return result;

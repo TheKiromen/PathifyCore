@@ -4,35 +4,57 @@ import java.awt.*;
 
 public class SobelEdgeDetection {
 
-    private int threshold;
     private SobelResult result;
+    private int h,w;
     private int[][] xGradient,yGradient,magnitude;
 
-    public SobelEdgeDetection(int threshold){
-        if(threshold>=0&&threshold<=255){
-            this.threshold=threshold;
-        }else{
-            throw new IllegalArgumentException("Threshold must be between 0 and 255.");
-        }
+    public SobelEdgeDetection(int[][] input){
+        this.h=input.length;
+        this.w=input[0].length;
     }
 
-    public SobelResult findEdges(int[][] input){
-        int h=input.length, w=input[0].length;
+    public SobelResult findEdges(){
         int Gx,Gy,Mag;
         xGradient=new int[h][w];
         yGradient=new int[h][w];
         magnitude=new int[h][w];
 
-        //TODO Sobel implementation
+        //Loop through the image and calculate the derivatives and magnitude
+        for(int y=1;y<h-1;y++){
+            for(int x=1;x<w-1;x++){
+                //Calculate x derivative
+                //TODO
+
+                //Calculate y derivative
+                //TODO
+
+                //Calculate magnitude
+                //TODO
+            }
+        }
+
+        //setting the edges to black to simplify future processing
+        int black = Color.BLACK.getRGB();
+        for(int x=0;x<w;x++){
+            magnitude[0][x]=black;
+            xGradient[0][x]=black;
+            yGradient[0][x]=black;
+            magnitude[h-1][x]=black;
+            xGradient[h-1][x]=black;
+            yGradient[h-1][x]=black;
+        }
+        for(int y=0;y<h;y++){
+            magnitude[y][0]=black;
+            xGradient[y][0]=black;
+            yGradient[y][0]=black;
+            magnitude[y][w-1]=black;
+            xGradient[y][w-1]=black;
+            yGradient[y][w-1]=black;
+        }
 
         result=new SobelResult(xGradient,yGradient,magnitude);
         return result;
-//        int h=input.length, w=input[0].length;
-//        int sumx,sumy,mag;
-//        xGradient=new int[h][w];
-//        yGradient=new int[h][w];
-//        magnitude=new int[h][w];
-//
+
 //        for(int y=1;y<h-1;y++){
 //            for(int x=1;x<w-1;x++){
 //                //Calculate xGradient
@@ -56,27 +78,5 @@ public class SobelEdgeDetection {
 //                magnitude[y][x]=(mag << 16 | mag << 8 | mag)-16777216;
 //            }
 //        }
-//
-//        //Fill the edges
-//        int black = Color.BLACK.getRGB();
-//        for(int x=0;x<w;x++){
-//            magnitude[0][x]=black;
-//            xGradient[0][x]=black;
-//            yGradient[0][x]=black;
-//            magnitude[h-1][x]=black;
-//            xGradient[h-1][x]=black;
-//            yGradient[h-1][x]=black;
-//        }
-//        for(int y=0;y<h;y++){
-//            magnitude[y][0]=black;
-//            xGradient[y][0]=black;
-//            yGradient[y][0]=black;
-//            magnitude[y][w-1]=black;
-//            xGradient[y][w-1]=black;
-//            yGradient[y][w-1]=black;
-//        }
-//
-//        result=new SobelResult(xGradient,yGradient,magnitude);
-//        return result;
     }
 }
