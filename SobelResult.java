@@ -3,12 +3,13 @@ package com.dkrucze.PathifyCore;
 public class SobelResult {
 
     private int[][] magnitude,xGradient,yGradient;
+    private double[][] angles;
 
-    public SobelResult(){}
-    public SobelResult(int[][] xGradient,int[][] yGradient,int[][] magnitude){
+    public SobelResult(int[][] xGradient, int[][] yGradient, int[][] magnitude, double[][] angles){
         this.magnitude=magnitude;
         this.xGradient=xGradient;
         this.yGradient=yGradient;
+        this.angles=angles;
     }
 
     //Getters and setters
@@ -34,5 +35,13 @@ public class SobelResult {
 
     public void setyGradient(int[][] yGradient) {
         this.yGradient = yGradient;
+    }
+
+    public double[][] getAngles() {
+        return angles;
+    }
+
+    public void setAngles(double[][] angles) {
+        this.angles = angles;
     }
 }

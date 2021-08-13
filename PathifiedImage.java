@@ -40,10 +40,19 @@ public class PathifiedImage {
         return getBufferedImage(grayscaleImage);
     }
     public BufferedImage getSobelXGradient(){
-        return getBufferedImage(edges.getxGradient());
+        //TODO
+        //Get min,max vale, map to 0-255
+        return getBufferedImage(initialImage);
     }
     public BufferedImage getSobelYGradient(){
-        return getBufferedImage(edges.getyGradient());
+        //TODO
+        //Get min,max value, map to 0-255
+        return getBufferedImage(initialImage);
+    }
+    public BufferedImage getSobelAngles() {
+        //TODO
+        //Convert angle into color,
+        return getBufferedImage(initialImage);
     }
     public BufferedImage getSobelMagnitude(){
         return getBufferedImage(edges.getMagnitude());

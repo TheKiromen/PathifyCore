@@ -5,6 +5,7 @@ import java.awt.*;
 public class CannyEdgeDetection {
 
     private int[][] sobelX,sobelY,sobelMag,result;
+    private double[][] angles;
     private boolean[][] candidates;
     private int highThreshold=100, lowThreshold=20;
     private int w,h;
@@ -13,6 +14,7 @@ public class CannyEdgeDetection {
         sobelX = sobel.getxGradient();
         sobelY = sobel.getyGradient();
         sobelMag = sobel.getMagnitude();
+        angles = sobel.getAngles();
         this.h=sobelMag.length;
         this.w=sobelMag[0].length;
         candidates=new boolean[h][w];
@@ -30,6 +32,7 @@ public class CannyEdgeDetection {
         double angle;
         int white = Color.WHITE.getRGB();
 
+        //TODO Better implementation?
         //Find all pixels above highThreshold
         for(int y=1;y<h-1;y++){
             for(int x=1;x<w-1;x++){
