@@ -1,23 +1,22 @@
 package com.dkrucze.PathifyCore;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CannyEdgeDetection {
 
-    private int[][] sobelX,sobelY,sobelMag,result;
+    private int[][] sobelMag,result;
     private double[][] angles;
-    private boolean[][] candidates;
-    private int highThreshold=100, lowThreshold=20;
+    private ArrayList<Point> candidates;
+    private int highThreshold=200, lowThreshold=50;
     private int w,h;
 
     CannyEdgeDetection(SobelResult sobel){
-        sobelX = sobel.getxGradient();
-        sobelY = sobel.getyGradient();
         sobelMag = sobel.getMagnitude();
         angles = sobel.getAngles();
+        candidates = new ArrayList();
         this.h=sobelMag.length;
         this.w=sobelMag[0].length;
-        candidates=new boolean[h][w];
         result=new int[h][w];
         //Fill the result with black pixels;
         int black = Color.BLACK.getRGB();
@@ -29,151 +28,44 @@ public class CannyEdgeDetection {
     }
 
     public int[][] detect(){
-        double angle;
         int white = Color.WHITE.getRGB();
+        double angle;
+        int currentVal;
 
-        //TODO Better implementation?
-        //Find all pixels above highThreshold
         for(int y=1;y<h-1;y++){
             for(int x=1;x<w-1;x++){
-                //FIXME: Correct angle directions
-//                //atan() returns value from -PI/2 to PI/2, so I am adding PI/2,
-//                //and converting to degrees for simplicity.
-//                angle=Math.atan(sobelY[y][x]/sobelX[y][x])+Math.PI/2;
-//                //New angle range is from 0 to 180 degrees (semicircle)
-//                angle=Math.toDegrees(angle);
-//                //Variables for finding local maximum
-//                int xOffset=1,yOffset=1;
-//                //Coordinates and value of the local maximum
-//                int maxX=x, maxY=y, maxVal=sobelMag[y][x]&255;
+                    currentVal=sobelMag[y][x]&255;
+
+                if(currentVal>lowThreshold){
+                    angle=angles[y][x];
+
+                    //FIXME Another implementation of non-maximum suppression?
+                    //Check only in 3x3 area
+                    //If there are pixels with bigger value in edge direction skip current iteration
+                    //If there are no pixels with bigger value we have local maximum
+                    //Check its value against thresholds and mark accordingly
+                    //Pick direction based on edge angle
+                    if(angle < 22.5 || angle > 157.5){
+                        //Horizontal ---
 //
-//                //Possible edge directions:
-//                if(angle < 22.5 || angle > 157.5){
-//                    //Horizontal ---
-//
-//                    //Check right side
-//                    while((sobelMag[y][x+xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y][x+xOffset]&255)>maxVal){
-//                            maxX=x+xOffset;
-//                            maxVal=sobelMag[y][x+xOffset]&255;
-//                        }
-//                        xOffset++;
-//                    }
-//                    xOffset=1;
-//
-//                    //Check left side
-//                    while((sobelMag[y][x-xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y][x-xOffset]&255)>maxVal){
-//                            maxX=x-xOffset;
-//                            maxVal=sobelMag[y][x-xOffset]&255;
-//                        }
-//                        xOffset++;
-//                    }
-//
-//                    //Mark a local maximum as a edge or edge candidate based on its value
-//                    if(maxVal>highThreshold){
-//                        result[maxY][maxX]=white;
-//                    }else if(maxVal>lowThreshold){
-//                        candidates[maxY][maxX]=true;
-//                    }
-//
-//                }else if(angle >= 22.5 && angle <= 67.5){
-//                    //Right diagonal /
-//
-//                    //Check right side
-//                    while((sobelMag[y-yOffset][x+xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y-yOffset][x+xOffset]&255)>maxVal){
-//                            maxX=x+xOffset;
-//                            maxY=y-yOffset;
-//                            maxVal=sobelMag[y-yOffset][x+xOffset]&255;
-//                        }
-//                        xOffset++;
-//                        yOffset++;
-//                    }
-//                    xOffset=1;
-//                    yOffset=1;
-//
-//                    //Check left side
-//                    while((sobelMag[y+yOffset][x-xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y+yOffset][x-xOffset]&255)>maxVal){
-//                            maxX=x-xOffset;
-//                            maxY=y+yOffset;
-//                            maxVal=sobelMag[y+yOffset][x-xOffset]&255;
-//                        }
-//                        xOffset++;
-//                        yOffset++;
-//                    }
-//
-//                    //Mark a local maximum as a edge or edge candidate based on its value
-//                    if(maxVal>highThreshold){
-//                        result[maxY][maxX]=white;
-//                    }else if(maxVal>lowThreshold){
-//                        candidates[maxY][maxX]=true;
-//                    }
-//
-//                }else if(angle > 67.5 && angle < 112.5){
-//                    //Vertical |
-//
-//                    //Check above
-//                    while((sobelMag[y-yOffset][x]&255)>lowThreshold){
-//                        if((sobelMag[y-yOffset][x]&255)>maxVal){
-//                            maxY=y-yOffset;
-//                            maxVal=sobelMag[y-yOffset][x]&255;
-//                        }
-//                        yOffset++;
-//                    }
-//                    yOffset=1;
-//
-//                    //Check below
-//                    while((sobelMag[y+yOffset][x]&255)>lowThreshold){
-//                        if((sobelMag[y+yOffset][x]&255)>maxVal){
-//                            maxY=y+yOffset;
-//                            maxVal=sobelMag[y+yOffset][x]&255;
-//                        }
-//                        yOffset++;
-//                    }
-//
-//                    //Mark a local maximum as a edge or edge candidate based on its value
-//                    if(maxVal>highThreshold){
-//                        result[maxY][maxX]=white;
-//                    }else if(maxVal>lowThreshold){
-//                        candidates[maxY][maxX]=true;
-//                    }
-//
-//                }else{//Angle between 112.5 and 157.5
-//                    //Left diagonal \
-//
-//                    //Check right side
-//                    while((sobelMag[y+yOffset][x+xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y+yOffset][x+xOffset]&255)>maxVal){
-//                            maxX=x+xOffset;
-//                            maxY=y+yOffset;
-//                            maxVal=sobelMag[y+yOffset][x+xOffset]&255;
-//                        }
-//                        xOffset++;
-//                        yOffset++;
-//                    }
-//                    xOffset=1;
-//                    yOffset=1;
-//
-//                    //Check left side
-//                    while((sobelMag[y-yOffset][x-xOffset]&255)>lowThreshold){
-//                        if((sobelMag[y-yOffset][x-xOffset]&255)>maxVal){
-//                            maxX=x-xOffset;
-//                            maxY=y-yOffset;
-//                            maxVal=sobelMag[y-yOffset][x-xOffset]&255;
-//                        }
-//                        xOffset++;
-//                        yOffset++;
-//                    }
-//
-//                    //Mark a local maximum as a edge or edge candidate based on its value
-//                    if(maxVal>highThreshold){
-//                        result[maxY][maxX]=white;
-//                    }else if(maxVal>lowThreshold){
-//                        candidates[maxY][maxX]=true;
-//                    }
-//                }
+                    }else if(angle >= 22.5 && angle <= 67.5){
+                        //Right diagonal /
+
+                    }else if(angle > 67.5 && angle < 112.5){
+                        //Vertical |
+
+                    }else{//Angle between 112.5 and 157.5
+                        //Left diagonal \
+
+                    }
+
+                    //Set pixel as edge or edge candidate based on its value
+                    if(currentVal>highThreshold){
+                        result[y][x]=white;
+                    }else{
+                        candidates.add(new Point(x,y));
+                    }
+                }
             }
         }
 
