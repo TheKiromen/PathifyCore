@@ -2,6 +2,7 @@ package com.dkrucze.PathifyCore;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class CannyEdgeDetection {
 
@@ -34,56 +35,76 @@ public class CannyEdgeDetection {
 
         for(int y=1;y<h-1;y++){
             for(int x=1;x<w-1;x++){
-                    currentVal=sobelMag[y][x]&255;
-
+                currentVal=sobelMag[y][x]&255;
                 if(currentVal>lowThreshold){
                     angle=angles[y][x];
 
-                    //FIXME Another implementation of non-maximum suppression?
-                    //Check only in 3x3 area
-                    //If there are pixels with bigger value in edge direction skip current iteration
-                    //If there are no pixels with bigger value we have local maximum
-                    //Check its value against thresholds and mark accordingly
                     //Pick direction based on edge angle
                     if(angle < 22.5 || angle > 157.5){
                         //Horizontal ---
-//
+                        if((sobelMag[y][x-1]&255)>currentVal || (sobelMag[y][x+1]&255)>currentVal)
+                            continue;
                     }else if(angle >= 22.5 && angle <= 67.5){
                         //Right diagonal /
-
+                        if((sobelMag[y-1][x+1]&255)>currentVal || (sobelMag[y+1][x-1]&255)>currentVal)
+                            continue;
                     }else if(angle > 67.5 && angle < 112.5){
                         //Vertical |
-
+                        if((sobelMag[y-1][x]&255)>currentVal || (sobelMag[y+1][x]&255)>currentVal)
+                            continue;
                     }else{//Angle between 112.5 and 157.5
                         //Left diagonal \
-
+                        if((sobelMag[y-1][x-1]&255)>currentVal || (sobelMag[y+1][x+1]&255)>currentVal)
+                            continue;
                     }
 
                     //Set pixel as edge or edge candidate based on its value
                     if(currentVal>highThreshold){
                         result[y][x]=white;
                     }else{
-                        candidates.add(new Point(x,y));
+                        result[y][x]=Color.GRAY.getRGB();
+                        //candidates.add(new Point(x,y));
                     }
                 }
             }
         }
 
-        //TODO
-        //Deal with two pixel wide edges (caused by two local max's with same values?)
-        //Figure out good threshold values.
-
+        //FIXME debug
+        //Check if loops correctly
+        //Check removing
+        //Adjust thresholds?
+        int candidateNeighbours,counter;
+        Point current;
+        Iterator<Point> itr = candidates.iterator();
         //Check all edge candidates
-        for(int y=1;y<h-1;y++){
-            for(int x=1;x<w-1;x++){
-                //TODO
-                //-Loop through all candidates
-                //-Check if a candidate is next to existing "hard" edge, if yes set pixel in result to white
+        do{
+            counter=0;
+            while(itr.hasNext()){
+                current=itr.next();
+                candidateNeighbours=numOfNeighbours(current.x,current.y);
+                if(candidateNeighbours > 0 && candidateNeighbours < 3){
+                    result[current.y][current.x]=white;
+                    counter++;
+                    itr.remove();
+                }
             }
-        }
-
+        }while(counter>0);
 
         return result;
+    }
+
+
+    private int numOfNeighbours(int x, int y){
+        int counter=0,white=Color.WHITE.getRGB();
+        //Check area around given point
+        for(int yOffset=-1;yOffset<=1;yOffset++){
+            for(int xOffset=-1;xOffset<=1;xOffset++){
+                //If there is strong edge next to our point, increase the counter
+                if(result[y+yOffset][x+xOffset]==white)
+                    counter++;
+            }
+        }
+        return counter;
     }
 
 }
