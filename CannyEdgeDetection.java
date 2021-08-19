@@ -9,7 +9,7 @@ public class CannyEdgeDetection {
     private int[][] sobelMag,result;
     private double[][] angles;
     private ArrayList<Point> candidates;
-    private int highThreshold=200, lowThreshold=50;
+    private int highThreshold=80, lowThreshold=25;
     private int w,h;
 
     CannyEdgeDetection(SobelResult sobel){
@@ -60,34 +60,36 @@ public class CannyEdgeDetection {
 
                     //Set pixel as edge or edge candidate based on its value
                     if(currentVal>highThreshold){
-                        result[y][x]=white;
+                        //Prevent creation of more than 1px wide edges
+                        if(numOfNeighbours(x,y)<3){
+                            result[y][x]=white;
+                        }
                     }else{
-                        result[y][x]=Color.GRAY.getRGB();
-                        //candidates.add(new Point(x,y));
+                        candidates.add(new Point(x,y));
                     }
                 }
             }
         }
 
-        //FIXME debug
-        //Check if loops correctly
-        //Check removing
-        //Adjust thresholds?
-        int candidateNeighbours,counter;
-        Point current;
-        Iterator<Point> itr = candidates.iterator();
-        //Check all edge candidates
+
+        //Complete the edges using hysteresis
+        int counter;
+        ArrayList<Point> tmp;
         do{
             counter=0;
-            while(itr.hasNext()){
-                current=itr.next();
-                candidateNeighbours=numOfNeighbours(current.x,current.y);
-                if(candidateNeighbours > 0 && candidateNeighbours < 3){
-                    result[current.y][current.x]=white;
+            tmp = new ArrayList<>();
+            //Loop through all the candidates for edge
+            for(Point c : candidates){
+                //If the candidate has between 1 and 2 adjacent edge pixels, mark it as edge
+                if(numOfNeighbours(c.x,c.y)<3 && numOfNeighbours(c.x,c.y)>0){
+                    result[c.y][c.x]=white;
+                    tmp.add(c);
                     counter++;
-                    itr.remove();
                 }
             }
+            //Remove all candidates changed to edges
+            candidates.removeAll(tmp);
+        //Repeat until no more candidates can be converted into edges
         }while(counter>0);
 
         return result;
