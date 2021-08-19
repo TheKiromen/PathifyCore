@@ -22,6 +22,9 @@ public class ImageToPathConverter {
      * @param image Image to be converted
      */
     public ImageToPathConverter(BufferedImage image){
+        if(image.getWidth()<10||image.getHeight()<10){
+            throw new IllegalArgumentException("Image too small");
+        }
         //Copy image into an array for easier processing
         copyImage(image);
     }
@@ -37,13 +40,24 @@ public class ImageToPathConverter {
         if(result==null){
             result=new PathifiedImage(imageType, tmp);
 
-            //Blur the initial image
-            FastGaussianBlur fgBlur = new FastGaussianBlur(tmp);
+            //Convert image to the grayscale
+            tmp = GrayscaleConversion.convert(tmp);
+            result.setGreyscaleImage(tmp);
+
+            //Blur the image
+            GaussianBlur fgBlur = new GaussianBlur(tmp);
             tmp = fgBlur.blur();
             result.setBlurredImage(tmp);
 
-            //Convert the blurred image to grayscale
-            result.setGreyscaleImage(GrayscaleConversion.convert(tmp));
+            //Find edges using sobel edge detection
+            SobelEdgeDetection sobel = new SobelEdgeDetection(tmp);
+            SobelResult sobelRes = sobel.findEdges();
+            result.setSobelEdges(sobelRes);
+
+            //Enhance the edges using Canny edge detection
+            CannyEdgeDetection canny = new CannyEdgeDetection(sobelRes);
+            tmp = canny.detect();
+            result.setCannyEdges(tmp);
         }
 
         return result;
