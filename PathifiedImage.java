@@ -1,6 +1,8 @@
 package com.dkrucze.PathifyCore;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Holds all the steps of conversion.
@@ -11,6 +13,7 @@ public class PathifiedImage {
     private int[][] initialImage,blurredImage,grayscaleImage,canny;
     private int imageType;
     private SobelResult edges;
+    private ArrayList<Point> path;
 
     public PathifiedImage(int imageType,int[][] initialImage){
         this.imageType=imageType;
@@ -28,6 +31,9 @@ public class PathifiedImage {
     }
     public void setCannyEdges(int[][] canny){
         this.canny=canny;
+    }
+    public void setPath(ArrayList<Point> path){
+        this.path=path;
     }
 
     public BufferedImage getInitialImage(){
@@ -59,6 +65,9 @@ public class PathifiedImage {
     }
     public BufferedImage getCannyEdges(){
         return getBufferedImage(canny);
+    }
+    public ArrayList<Point> getPath(){
+        return path;
     }
 
     /**

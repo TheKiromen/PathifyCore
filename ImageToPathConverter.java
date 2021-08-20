@@ -58,6 +58,10 @@ public class ImageToPathConverter {
             CannyEdgeDetection canny = new CannyEdgeDetection(sobelRes);
             tmp = canny.detect();
             result.setCannyEdges(tmp);
+
+            //Calculate path based on the edges
+            PathCreator pc = new PathCreator(tmp);
+            result.setPath(pc.calculatePath());
         }
 
         return result;
