@@ -1,7 +1,10 @@
 package com.dkrucze.PathifyCore;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Facade class to warp up all conversions for easier use
@@ -62,6 +65,9 @@ public class ImageToPathConverter {
             //Calculate path based on the edges
             PathCreator pc = new PathCreator(tmp);
             result.setPath(pc.calculatePath());
+            try {
+                ImageIO.write(result.visualizePath(pc.getPaths()),"jpg",new File("img_output/outputStep5.jpg"));
+            } catch (IOException e) {}
         }
 
         return result;

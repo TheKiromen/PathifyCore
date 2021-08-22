@@ -28,6 +28,7 @@ public class CannyEdgeDetection {
         }
     }
 
+    //FIXME refactor
     public int[][] detect(){
         int white = Color.WHITE.getRGB();
         double angle;
@@ -60,10 +61,7 @@ public class CannyEdgeDetection {
 
                     //Set pixel as edge or edge candidate based on its value
                     if(currentVal>highThreshold){
-                        //Prevent creation of more than 1px wide edges
-                        if(numOfNeighbours(x,y)<3){
-                            result[y][x]=white;
-                        }
+                        result[y][x]=white;
                     }else{
                         candidates.add(new Point(x,y));
                     }
