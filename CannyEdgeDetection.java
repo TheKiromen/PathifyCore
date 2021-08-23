@@ -61,7 +61,9 @@ public class CannyEdgeDetection {
 
                     //Set pixel as edge or edge candidate based on its value
                     if(currentVal>highThreshold){
-                        result[y][x]=white;
+                        if(numOfNeighbours(x,y)<3){
+                            result[y][x]=white;
+                        }
                     }else{
                         candidates.add(new Point(x,y));
                     }
