@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Holds all the steps of conversion.
@@ -15,7 +16,7 @@ public class PathifiedImage {
     private int[][] initialImage,blurredImage,grayscaleImage,canny;
     private int imageType;
     private SobelResult edges;
-    private ArrayList<Point> path;
+    private LinkedList<Point> path;
 
     public PathifiedImage(int imageType,int[][] initialImage){
         this.imageType=imageType;
@@ -34,7 +35,7 @@ public class PathifiedImage {
     public void setCannyEdges(int[][] canny){
         this.canny=canny;
     }
-    public void setPath(ArrayList<Point> path){
+    public void setPath(LinkedList<Point> path){
         this.path=path;
     }
 
@@ -68,7 +69,7 @@ public class PathifiedImage {
     public BufferedImage getCannyEdges(){
         return getBufferedImage(canny);
     }
-    public ArrayList<Point> getPath(){
+    public LinkedList<Point> getPath(){
         return path;
     }
 
