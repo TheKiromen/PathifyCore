@@ -1,6 +1,7 @@
 package com.dkrucze.PathifyCore;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -172,12 +173,53 @@ public class PathCreator {
             }
         }
 
-        //Connect all the curves and loops together to form one path
-        //TODO
-        // Pick starting curve, find closest curve to the beginning and end of the curve,
-        // attach these curves (or loops) respectively, continue until no more curves left.
-        // For curves, check only the distance to both ends, for loops check distance to every n-th point in the loop
+        connectPaths();
+        
         return result;
+    }
+
+    private void connectPaths(){
+        double minDistanceStart=Double.MAX_VALUE, minDistanceEnd=Double.MAX_VALUE;
+        boolean reverseStart,reverseEnd;
+        int startIndex,endIndex;
+
+        //Add initial curve
+        result.addAll(curves.get(0));
+        curves.remove(0);
+
+        //Connect all the curves and loops together to form one path
+        while(loops.size() > 0 && curves.size() > 0){
+            //Check distance between curves, and ends of main path
+            for(int i=0;i<curves.size();i++){
+                ArrayList<Point> curve = curves.get(i);
+
+                //Check for closest curve to the start of the path
+                if(distance(result.get(0),curve.get(0)) < minDistanceStart){
+                    minDistanceStart=distance(result.get(0),curve.get(0));
+                    startIndex=i;
+                    reverseStart=false;
+                }else if(distance(result.get(0),curve.get(curve.size()-1)) < minDistanceStart){
+                    minDistanceStart=distance(result.get(0),curve.get(curve.size()-1));
+                    startIndex=i;
+                    reverseStart=true;
+                }
+
+                //Check for closest curve to the end of the path
+                if(distance(result.get(result.size()-1),curve.get(0)) < minDistanceStart){
+                    minDistanceStart=distance(result.get(result.size()-1),curve.get(0));
+                    endIndex=i;
+                    reverseEnd=false;
+                }else if(distance(result.get(result.size()-1),curve.get(curve.size()-1)) < minDistanceStart){
+                    minDistanceStart=distance(result.get(result.size()-1),curve.get(curve.size()-1));
+                    endIndex=i;
+                    reverseEnd=true;
+                }
+            }
+
+            //Check distance between loops, and ends of main path
+
+
+        }
     }
 
 
@@ -204,6 +246,10 @@ public class PathCreator {
         else{
             result.addAll(subPath);
         }
+    }
+
+    private double distance(Point p1, Point p2){
+        return Point2D.distance(p1.x,p1.y,p2.x,p2.y);
     }
 
     public int[][] getPaths(){
