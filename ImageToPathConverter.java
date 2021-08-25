@@ -65,9 +65,6 @@ public class ImageToPathConverter {
             //Calculate path based on the edges
             PathCreator pc = new PathCreator(tmp);
             result.setPath(pc.calculatePath());
-            try {
-                ImageIO.write(result.visualizePath(pc.getPaths()),"jpg",new File("img_output/outputStep5.jpg"));
-            } catch (IOException e) {}
         }
 
         return result;

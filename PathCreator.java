@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class PathCreator {
@@ -179,46 +180,52 @@ public class PathCreator {
     }
 
     private void connectPaths(){
-        double minDistanceStart=Double.MAX_VALUE, minDistanceEnd=Double.MAX_VALUE;
-        boolean reverseStart,reverseEnd;
-        int startIndex,endIndex;
 
         //Add initial curve
         result.addAll(curves.get(0));
         curves.remove(0);
 
-        //Connect all the curves and loops together to form one path
-        while(loops.size() > 0 && curves.size() > 0){
-            //Check distance between curves, and ends of main path
-            for(int i=0;i<curves.size();i++){
-                ArrayList<Point> curve = curves.get(i);
+        while(curves.size()>0 || loops.size()>0){
+            Point endOfPath = result.get(result.size()-1);
+            double distance = Double.MAX_VALUE;
+            int index=0;
+            boolean reversed = false,loop=false;
 
-                //Check for closest curve to the start of the path
-                if(distance(result.get(0),curve.get(0)) < minDistanceStart){
-                    minDistanceStart=distance(result.get(0),curve.get(0));
-                    startIndex=i;
-                    reverseStart=false;
-                }else if(distance(result.get(0),curve.get(curve.size()-1)) < minDistanceStart){
-                    minDistanceStart=distance(result.get(0),curve.get(curve.size()-1));
-                    startIndex=i;
-                    reverseStart=true;
+            for(ArrayList<Point> curve : curves){
+                Point curveStart = curve.get(0);
+                Point curveEnd = curve.get(curve.size()-1);
+
+                if(distance(endOfPath,curveStart)<distance){
+                    distance=distance(endOfPath,curveStart);
+                    index=curves.indexOf(curve);
+                    reversed=false;
                 }
 
-                //Check for closest curve to the end of the path
-                if(distance(result.get(result.size()-1),curve.get(0)) < minDistanceStart){
-                    minDistanceStart=distance(result.get(result.size()-1),curve.get(0));
-                    endIndex=i;
-                    reverseEnd=false;
-                }else if(distance(result.get(result.size()-1),curve.get(curve.size()-1)) < minDistanceStart){
-                    minDistanceStart=distance(result.get(result.size()-1),curve.get(curve.size()-1));
-                    endIndex=i;
-                    reverseEnd=true;
+                if(distance(endOfPath,curveEnd)<distance){
+                    distance=distance(endOfPath,curveEnd);
+                    index=curves.indexOf(curve);
+                    reversed=true;
                 }
             }
 
-            //Check distance between loops, and ends of main path
+            for(ArrayList<Point> l : loops){
+                if(distance(endOfPath,l.get(0))<distance){
+                    distance=distance(endOfPath,l.get(0));
+                    index=loops.indexOf(l);
+                    loop=true;
+                }
+            }
 
-
+            if(reversed){
+                Collections.reverse(curves.get(index));
+            }
+            if(loop){
+                result.addAll(loops.get(index));
+                loops.remove(index);
+            }else{
+                result.addAll(curves.get(index));
+                curves.remove(index);
+            }
         }
     }
 
@@ -236,23 +243,8 @@ public class PathCreator {
         return counter;
     }
 
-    private void appendPath(ArrayList<Point> subPath,boolean start){
-        //Append sub-path to the beginning of the main path
-        if(start==true){
-            for(Point p : subPath)
-                result.add(0,p);
-        }
-        //Append sub-path to the end of the main path
-        else{
-            result.addAll(subPath);
-        }
-    }
 
     private double distance(Point p1, Point p2){
         return Point2D.distance(p1.x,p1.y,p2.x,p2.y);
-    }
-
-    public int[][] getPaths(){
-        return paths;
     }
 }
