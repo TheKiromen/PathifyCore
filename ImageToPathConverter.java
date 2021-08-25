@@ -1,7 +1,10 @@
 package com.dkrucze.PathifyCore;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Facade class to warp up all conversions for easier use
@@ -58,6 +61,10 @@ public class ImageToPathConverter {
             CannyEdgeDetection canny = new CannyEdgeDetection(sobelRes);
             tmp = canny.detect();
             result.setCannyEdges(tmp);
+
+            //Calculate path based on the edges
+            PathCreator pc = new PathCreator(tmp);
+            result.setPath(pc.calculatePath());
         }
 
         return result;
