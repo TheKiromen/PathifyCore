@@ -1,10 +1,7 @@
 package com.dkrucze.PathifyCore;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Facade class to warp up all conversions for easier use
@@ -17,7 +14,6 @@ public class ImageToPathConverter {
      * Pixels are stored as Integers in RGB format
      */
     private int[][] tmp;
-    private int imageType;
     private PathifiedImage result;
 
     /**
@@ -41,7 +37,7 @@ public class ImageToPathConverter {
     public PathifiedImage convert(){
         //Convert only once
         if(result==null){
-            result=new PathifiedImage(imageType, tmp);
+            result=new PathifiedImage(tmp);
 
             //Convert image to the grayscale
             tmp = GrayscaleConversion.convert(tmp);
@@ -77,28 +73,52 @@ public class ImageToPathConverter {
      * @param image Image to be converted.
      */
     private void copyImage(BufferedImage image){
-        //Get image dimensions, type and transparency
-        imageType=image.getType();
+        //Get image dimensions
         int h=image.getHeight(), w=image.getWidth();
         //Get image data in byte format
         byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        //Check for transparency
+        boolean hasAlpha = image.getAlphaRaster() !=null;
+        //Buffer variables
+        int pxLength,rgb;
 
         //Copy the image
         tmp=new int[h][w];
-        int pxLength = 3,rgb;
-        //Loop through image data
-        for(int pixel=0,y=0,x=0; pixel+2<pixels.length;pixel+=pxLength){
-            rgb=0;
-            rgb += -16777216; //jpg has no alpha thus 255 for alpha channel
-            rgb += ((int) pixels[pixel] & 255); // blue
-            rgb += (((int) pixels[pixel + 1] & 255) << 8); // green
-            rgb += (((int) pixels[pixel + 2] & 255) << 16); // red
+        if(hasAlpha){
+            pxLength=4;
+            //Loop through image data
+            for(int pixel=0,y=0,x=0; pixel+3<pixels.length;pixel+=pxLength){
+                rgb=0;
+                rgb += (((int)pixels[pixel] & 255) << 24); //alpha
+                rgb += ((int) pixels[pixel + 1] & 255); // blue
+                rgb += (((int) pixels[pixel + 2] & 255) << 8); // green
+                rgb += (((int) pixels[pixel + 3] & 255) << 16); // red
 
-            tmp[y][x]=rgb;
-            x++;
-            if(x==w){
-                x=0;
-                y++;
+                //Save pixel to array
+                tmp[y][x]=rgb;
+                x++;
+                if(x==w){
+                    x=0;
+                    y++;
+                }
+            }
+        }else{
+            pxLength = 3;
+            //Loop through image data
+            for(int pixel=0,y=0,x=0; pixel+2<pixels.length;pixel+=pxLength){
+                rgb=0;
+                rgb += -16777216; //jpg has no alpha thus 255 for alpha channel
+                rgb += ((int) pixels[pixel] & 255); // blue
+                rgb += (((int) pixels[pixel + 1] & 255) << 8); // green
+                rgb += (((int) pixels[pixel + 2] & 255) << 16); // red
+
+                //Save pixel to array
+                tmp[y][x]=rgb;
+                x++;
+                if(x==w){
+                    x=0;
+                    y++;
+                }
             }
         }
     }

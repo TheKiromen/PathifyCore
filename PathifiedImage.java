@@ -1,10 +1,7 @@
 package com.dkrucze.PathifyCore;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -13,21 +10,19 @@ import java.util.LinkedList;
  */
 public class PathifiedImage {
 
-    private int[][] initialImage,blurredImage,grayscaleImage,canny;
-    private int imageType;
+    private int[][] initialImage,grayscaleImage,blurredImage,canny;
     private SobelResult edges;
     private LinkedList<Point> path;
 
-    public PathifiedImage(int imageType,int[][] initialImage){
-        this.imageType=imageType;
+    public PathifiedImage(int[][] initialImage){
         this.initialImage=initialImage;
     }
 
-    public void setBlurredImage(int[][] blurredImage) {
-        this.blurredImage = blurredImage;
-    }
     public void setGreyscaleImage(int[][] grayscaleImage){
         this.grayscaleImage=grayscaleImage;
+    }
+    public void setBlurredImage(int[][] blurredImage) {
+        this.blurredImage = blurredImage;
     }
     public void setSobelEdges(SobelResult edges){
         this.edges=edges;
@@ -73,9 +68,6 @@ public class PathifiedImage {
         return path;
     }
 
-    public BufferedImage visualizePath(int[][] path){
-        return getBufferedImage(path);
-    }
 
     /**
      * Converts array of pixels stored in RGB format into ready to save file.
@@ -83,7 +75,7 @@ public class PathifiedImage {
      * @return Image object
      */
     private BufferedImage getBufferedImage(int[][] pixels) {
-        BufferedImage tmp = new BufferedImage(pixels[0].length,pixels.length,imageType);
+        BufferedImage tmp = new BufferedImage(pixels[0].length,pixels.length,5);
         for(int i=0; i< pixels.length;i++){
             for(int j=0; j<pixels[0].length;j++){
                 tmp.setRGB(j,i,pixels[i][j]);
