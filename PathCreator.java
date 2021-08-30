@@ -179,6 +179,8 @@ public class PathCreator {
         return result;
     }
 
+    //FIXME
+    // Try to first connect paths that do not cross
     private void connectPaths(){
 
         //Add initial curve

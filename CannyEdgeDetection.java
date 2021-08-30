@@ -28,7 +28,6 @@ public class CannyEdgeDetection {
         }
     }
 
-    //FIXME refactor
     public int[][] detect(){
         int white = Color.WHITE.getRGB();
         double angle;
@@ -60,18 +59,25 @@ public class CannyEdgeDetection {
                     }
 
                     //Set pixel as edge or edge candidate based on its value
+                    int neighbours = numOfNeighbours(x,y);
                     if(currentVal>highThreshold){
-                        if(numOfNeighbours(x,y)<3){
+                        if(neighbours<3){
                             result[y][x]=white;
                         }
                     }else{
-                        candidates.add(new Point(x,y));
+                        if(neighbours > 0 && neighbours < 3){
+                            result[y][x]=white;
+                        }else{
+                            candidates.add(new Point(x,y));
+                        }
                     }
                 }
             }
         }
 
 
+        //FIXME
+        // Try better implementation of hysteresis?
         //Complete the edges using hysteresis
         int counter;
         ArrayList<Point> tmp;
