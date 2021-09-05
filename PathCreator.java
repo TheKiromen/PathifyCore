@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.stream.IntStream;
 
 public class PathCreator {
 
@@ -179,8 +180,7 @@ public class PathCreator {
         return result;
     }
 
-    //FIXME
-    // Try to first connect paths that do not cross
+
     private void connectPaths(){
 
         //Add initial curve
@@ -190,6 +190,7 @@ public class PathCreator {
         while(curves.size()>0 || loops.size()>0){
             Point endOfPath = result.get(result.size()-1);
             double distance = Double.MAX_VALUE;
+            ArrayList<Point> tmp=null;
             int index=0;
             boolean reversed = false,loop=false;
 
@@ -199,6 +200,7 @@ public class PathCreator {
 
                 if(distance(endOfPath,curveStart)<distance){
                     distance=distance(endOfPath,curveStart);
+                    tmp=curve;
                     index=curves.indexOf(curve);
                     reversed=false;
                 }
@@ -213,20 +215,52 @@ public class PathCreator {
             for(ArrayList<Point> l : loops){
                 if(distance(endOfPath,l.get(0))<distance){
                     distance=distance(endOfPath,l.get(0));
+                    tmp=l;
                     index=loops.indexOf(l);
                     loop=true;
                 }
             }
 
+            //Get two points for function calculation
+            int x1=endOfPath.x,y1=endOfPath.y;
             if(reversed){
-                Collections.reverse(curves.get(index));
+                Collections.reverse(tmp);
             }
+            int x2=tmp.get(0).x,y2=tmp.get(0).y;
+
+            //Check for vertical line, connect the ends
+            if(x1==x2){
+                if(y1>y2){
+                    //Use map to reverse stream
+                    IntStream.range(y2,y1).map(i -> y2-i + y1-1).skip(1).forEach(y -> result.add(new Point(x1,y)));
+                }else{
+                    IntStream.range(y1,y2).skip(1).forEach(y -> result.add(new Point(x1,y)));
+                }
+
+
+            }
+            //Connect end of path to closest sub-path using linear function
+            else{
+                //Calculate function connecting two points
+                //Integer division returns int, so we need to cast one of the values to double.
+                //This forces the result to be double.
+                double a=((double)y2-y1)/(x2-x1);
+                double b=(((double)y1*x2)-(y2*x1))/(x2-x1);
+
+                if(x1>x2){
+                    //Use map to reverse stream
+                    IntStream.range(x2,x1).map(i -> x2-i + x1-1).skip(1).forEach(x -> result.add(new Point(x,(int)(a*x+b))));
+                }else{
+                    IntStream.range(x1,x2).skip(1).forEach(x -> result.add(new Point(x,(int)(a*x+b))));
+                }
+            }
+
+            //Append sub-path to the main path
+            result.addAll(tmp);
             if(loop){
-                result.addAll(loops.get(index));
-                loops.remove(index);
+                loops.remove(tmp);
             }else{
-                result.addAll(curves.get(index));
-                curves.remove(index);
+                curves.remove(tmp);
             }
         }
     }
