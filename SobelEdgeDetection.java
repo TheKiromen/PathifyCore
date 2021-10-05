@@ -41,8 +41,8 @@ public class SobelEdgeDetection {
                 //Calculate the angle
                 //atan2() returns values ranging from -PI to PI
                 angle=Math.atan2(gy,gx);
-                //Adding PI (180 degrees) to change range 0-PI
-                //This will reduce if's usage in Canny.
+                //Adding PI (180 degrees) if angle is negative to change the range to 0-PI
+                //This will reduce if statements usage in Canny.
                 if(angle<0){
                     angle+=Math.PI;
                 }
@@ -61,23 +61,23 @@ public class SobelEdgeDetection {
         //Horizontal edges
         for(int x=0;x<w;x++){
             magnitude[0][x]=black;
-            xGradient[0][x]=black;
-            yGradient[0][x]=black;
+            xGradient[0][x]=0;
+            yGradient[0][x]=0;
             angles[0][x]=0;
             magnitude[h-1][x]=black;
-            xGradient[h-1][x]=black;
-            yGradient[h-1][x]=black;
+            xGradient[h-1][x]=0;
+            yGradient[h-1][x]=0;
             angles[h-1][x]=0;
         }
         //Vertical edges
         for(int y=0;y<h;y++){
             magnitude[y][0]=black;
-            xGradient[y][0]=black;
-            yGradient[y][0]=black;
+            xGradient[y][0]=0;
+            yGradient[y][0]=0;
             angles[y][0]=0;
             magnitude[y][w-1]=black;
-            xGradient[y][w-1]=black;
-            yGradient[y][w-1]=black;
+            xGradient[y][w-1]=0;
+            yGradient[y][w-1]=0;
             angles[y][w-1]=0;
         }
 

@@ -75,9 +75,7 @@ public class CannyEdgeDetection {
             }
         }
 
-
-        //FIXME
-        // Try better implementation of hysteresis?
+        
         //Complete the edges using hysteresis
         int counter;
         ArrayList<Point> tmp;
