@@ -11,7 +11,7 @@ import java.util.LinkedList;
  */
 public class PathifiedImage {
 
-    private int[][] initialImage,grayscaleImage,blurredImage,xGradient,yGradient,angles,canny;
+    private int[][] initialImage,grayscaleImage,blurredImage,xGradient,yGradient,canny;
     private SobelResult edges;
     private LinkedList<Point> path;
 
@@ -30,8 +30,6 @@ public class PathifiedImage {
         int w=initialImage[0].length,h=initialImage.length;
         xGradient = new int[h][w];
         yGradient = new int[h][w];
-        angles = new int[h][w];
-
 
         //Get maximum and minimum vales of gradients
         int xMax,xMin,yMax,yMin,tmp,current,black;
@@ -55,15 +53,6 @@ public class PathifiedImage {
                 current = edges.getyGradient()[y][x];
                 tmp = (int)(255.0*(current+yMin)/(yMin+yMax));
                 yGradient[y][x]=(tmp << 16 | tmp << 8 | tmp)-16777216;;
-
-                //Map the angles to a color
-                //TODO
-                angle=edges.getAngles()[y][x];
-                if(angle!=0){
-                    //TODO Angle to color mapping
-                }else{
-                    angles[y][x]=black;
-                }
             }
         }
     }
@@ -88,9 +77,6 @@ public class PathifiedImage {
     }
     public BufferedImage getSobelYGradient(){
         return getBufferedImage(yGradient);
-    }
-    public BufferedImage getSobelAngles() {
-        return getBufferedImage(angles);
     }
     public BufferedImage getSobelMagnitude(){
         return getBufferedImage(edges.getMagnitude());
